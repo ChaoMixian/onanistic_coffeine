@@ -51,8 +51,11 @@ class HomePageStats {
     final now = DateTime.now();
     final startOfMonth = DateTime(now.year, now.month, 1);
     final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-    final startOfWeekDate =
-        DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day);
+    final startOfWeekDate = DateTime(
+      startOfWeek.year,
+      startOfWeek.month,
+      startOfWeek.day,
+    );
 
     List<Record> thisMonthRecords = [];
     List<Record> thisWeekRecords = [];
@@ -61,8 +64,11 @@ class HomePageStats {
     for (int i = 0; i < 7; i++) {
       final day = now.subtract(Duration(days: i));
       final dateKey = day.year * 10000 + day.month * 100 + day.day;
-      trendDataMap[dateKey] =
-          DayData(date: day, recordCount: 0, resistCount: 0);
+      trendDataMap[dateKey] = DayData(
+        date: day,
+        recordCount: 0,
+        resistCount: 0,
+      );
     }
 
     for (final record in allRecords) {
@@ -72,7 +78,8 @@ class HomePageStats {
       if (record.startTime.isAfter(startOfWeekDate)) {
         thisWeekRecords.add(record);
       }
-      final recordDateKey = record.startTime.year * 10000 +
+      final recordDateKey =
+          record.startTime.year * 10000 +
           record.startTime.month * 100 +
           record.startTime.day;
       if (trendDataMap.containsKey(recordDateKey)) {
@@ -86,32 +93,35 @@ class HomePageStats {
     }
 
     final int recordCountThisMonth = thisMonthRecords.length;
-    final int resistCountThisMonth =
-        thisMonthRecords.where((r) => r.didResist).length;
+    final int resistCountThisMonth = thisMonthRecords
+        .where((r) => r.didResist)
+        .length;
     final successRate = recordCountThisMonth > 0
         ? resistCountThisMonth / recordCountThisMonth
         : 0.0;
-    final successRecords =
-        thisMonthRecords.where((r) => !r.didResist).toList();
+    final successRecords = thisMonthRecords.where((r) => !r.didResist).toList();
     final averageDuration = successRecords.isNotEmpty
         ? successRecords.map((r) => r.duration).reduce((a, b) => a + b) ~/
-            successRecords.length
+              successRecords.length
         : 0;
 
     final int recordCountThisWeek = thisWeekRecords.length;
-    final int resistCountThisWeek =
-        thisWeekRecords.where((r) => r.didResist).length;
+    final int resistCountThisWeek = thisWeekRecords
+        .where((r) => r.didResist)
+        .length;
     final weekSuccessRate = recordCountThisWeek > 0
         ? resistCountThisWeek / recordCountThisWeek
         : 0.0;
 
     final reasonStats = <String, int>{};
     for (var record in thisMonthRecords) {
-      reasonStats[record.reason] = (reasonStats[record.reason] ?? 0) + 1;
+      // 遍历一个记录中的每一个原因
+      for (var reason in record.reasons) {
+        reasonStats[reason] = (reasonStats[reason] ?? 0) + 1;
+      }
     }
     final sortedReasonStats = Map.fromEntries(
-      reasonStats.entries.toList()
-        ..sort((a, b) => b.value.compareTo(a.value)),
+      reasonStats.entries.toList()..sort((a, b) => b.value.compareTo(a.value)),
     );
 
     return HomePageStats(
@@ -133,9 +143,12 @@ class DayData {
   final DateTime date;
   final int recordCount;
   final int resistCount;
-  DayData({required this.date, required this.recordCount, required this.resistCount});
+  DayData({
+    required this.date,
+    required this.recordCount,
+    required this.resistCount,
+  });
 }
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -200,8 +213,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
-            onRefresh: _loadData,
-            child: CustomScrollView(
+              onRefresh: _loadData,
+              child: CustomScrollView(
                 slivers: [
                   SliverAppBar(
                     expandedHeight: 60,
@@ -238,7 +251,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ],
               ),
-          ),
+            ),
     );
   }
 
@@ -343,7 +356,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.self_improvement, size: 20, color: Theme.of(context).colorScheme.primary),
+            child: Icon(
+              Icons.self_improvement,
+              size: 20,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           const SizedBox(width: _UIConstants.spacing),
           Expanded(
@@ -358,9 +375,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
     );
   }
-  
+
   Widget _buildMainStatCard(
-      String title, String value, IconData icon, Color color, String unit) {
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+    String unit,
+  ) {
     return Container(
       padding: const EdgeInsets.all(_UIConstants.padding),
       decoration: BoxDecoration(
@@ -388,10 +410,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 child: Icon(icon, color: color, size: 20),
               ),
               const Spacer(),
-              Text(
-                unit,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              Text(unit, style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
           const SizedBox(height: _UIConstants.spacing),
@@ -405,9 +424,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
           Text(
             title,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -441,7 +460,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               const SizedBox(width: 8),
               Text(
                 '本周进度',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
               ),
               const Spacer(),
               Text(
@@ -460,8 +481,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 weekSuccessRate >= 0.8
                     ? Colors.green.shade400
                     : weekSuccessRate >= 0.5
-                        ? Colors.orange.shade400
-                        : Colors.red.shade400,
+                    ? Colors.orange.shade400
+                    : Colors.red.shade400,
               ),
               minHeight: 8,
             ),
@@ -469,7 +490,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           const SizedBox(height: 8),
           Text(
             '成功率 ${(weekSuccessRate * 100).round()}%',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -477,7 +500,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget _buildRecentRecordsSection() {
-    final recentRecords = _allRecords.reversed.take(5).toList();
+    final recentRecords = _allRecords.take(5).toList();
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -490,7 +513,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             const SizedBox(width: 8),
             Text(
               '最近记录',
-              style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+              style: textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const Spacer(),
             TextButton(
@@ -506,10 +531,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         else
           Column(
             children: recentRecords
-                .map((record) => RecordListItem(
-                      record: record,
-                      onTap: () => _showRecordDetail(record),
-                    ))
+                .map(
+                  (record) => RecordListItem(
+                    record: record,
+                    onTap: () => _showRecordDetail(record),
+                  ),
+                )
                 .toList(),
           ),
       ],
@@ -523,17 +550,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
         borderRadius: BorderRadius.circular(_UIConstants.borderRadius),
-        border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+        ),
       ),
       child: Column(
         children: [
-          Icon(Icons.inbox_outlined, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          Icon(
+            Icons.inbox_outlined,
+            size: 48,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(height: 16),
           Text(
             '还没有记录',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text('点击下方“+”按钮开始记录', style: Theme.of(context).textTheme.bodyMedium),
@@ -550,11 +583,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       children: [
         Row(
           children: [
-            Icon(Icons.analytics_outlined, color: textTheme.bodyLarge?.color, size: 20),
+            Icon(
+              Icons.analytics_outlined,
+              color: textTheme.bodyLarge?.color,
+              size: 20,
+            ),
             const SizedBox(width: 8),
             Text(
               '数据分析',
-              style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+              style: textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -582,11 +621,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
       child: Column(
         children: [
-          Icon(Icons.show_chart, size: 40, color: theme.colorScheme.onSurfaceVariant),
+          Icon(
+            Icons.show_chart,
+            size: 40,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(height: 12),
           Text(
             '数据不足',
-            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -607,7 +652,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(_UIConstants.borderRadius),
-         boxShadow: [
+        boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
             blurRadius: 10,
@@ -620,7 +665,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         children: [
           Text(
             '7天趋势',
-            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 16),
           Container(height: 120, child: _buildSimpleChart()),
@@ -634,8 +681,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     final maxCount = _stats.weekTrend
         .map((d) => d.recordCount)
-        .reduce((a, b) => max(a,b));
-        
+        .reduce((a, b) => max(a, b));
+
     if (maxCount == 0) {
       return Center(
         child: Text('本周暂无数据', style: Theme.of(context).textTheme.bodyMedium),
@@ -669,7 +716,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               width: 20,
               height: height,
               decoration: BoxDecoration(
-                color: isDayToday ? colorScheme.primary : colorScheme.primary.withOpacity(0.5),
+                color: isDayToday
+                    ? colorScheme.primary
+                    : colorScheme.primary.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
@@ -677,9 +726,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Text(
               getWeekdayName(dayData.date),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: isDayToday ? colorScheme.primary : colorScheme.onSurfaceVariant,
-                    fontWeight: isDayToday ? FontWeight.bold : FontWeight.normal,
-                  ),
+                color: isDayToday
+                    ? colorScheme.primary
+                    : colorScheme.onSurfaceVariant,
+                fontWeight: isDayToday ? FontWeight.bold : FontWeight.normal,
+              ),
             ),
           ],
         );
@@ -710,7 +761,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         children: [
           Text(
             '主要原因',
-            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 16),
           ...topReasons.map((entry) {
@@ -748,14 +801,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   Container(
                     width: 12,
                     height: 12,
-                    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     flex: 2,
                     child: Text(
                       entry.key,
-                      style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -774,7 +832,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   const SizedBox(width: 12),
                   Text(
                     '${(percentage * 100).round()}%',
-                    style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -784,7 +844,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
     );
   }
-
 
   // --- show modal methods ---
   void _showRecordDetail(Record record) {

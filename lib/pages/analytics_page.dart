@@ -35,7 +35,11 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
     if (_selectedPeriod == 0) {
       // start = now.subtract(Duration(days: now.weekday - 1));
-      start = DateTime(now.year, now.month, now.day).subtract(Duration(days: now.weekday - 1));
+      start = DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).subtract(Duration(days: now.weekday - 1));
     } else if (_selectedPeriod == 1) {
       start = DateTime(now.year, now.month, 1);
     } else {
@@ -43,7 +47,9 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     }
 
     setState(() {
-      _filteredRecords = _allRecords.where((r) => r.startTime.isAfter(start)).toList();
+      _filteredRecords = _allRecords
+          .where((r) => r.startTime.isAfter(start))
+          .toList();
     });
   }
 
@@ -52,11 +58,18 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     int total = _filteredRecords.length;
     int success = _filteredRecords.where((r) => r.didResist).length;
     double successRate = total == 0 ? 0 : success / total;
-    int avgDuration = total == 0 ? 0 : (_filteredRecords.map((r) => r.duration).reduce((a, b) => a + b) / total).round();
+    int avgDuration = total == 0
+        ? 0
+        : (_filteredRecords.map((r) => r.duration).reduce((a, b) => a + b) /
+                  total)
+              .round();
 
     Map<String, int> reasonCount = {};
     for (var r in _filteredRecords) {
-      reasonCount[r.reason] = (reasonCount[r.reason] ?? 0) + 1;
+      // 遍历一个记录中的每一个原因
+      for (var reason in r.reasons) {
+        reasonCount[reason] = (reasonCount[reason] ?? 0) + 1;
+      }
     }
     var sortedReasons = reasonCount.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
@@ -98,27 +111,61 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             SizedBox(height: 16),
 
             // 总体统计
-            Text('总体统计', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              '总体统计',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 8),
             Row(
               children: [
-                Expanded(child: _buildStatsCard('总记录', '$total', Icons.list, Colors.blue)),
+                Expanded(
+                  child: _buildStatsCard(
+                    '总记录',
+                    '$total',
+                    Icons.list,
+                    Colors.blue,
+                  ),
+                ),
                 SizedBox(width: 8),
-                Expanded(child: _buildStatsCard('成功次数', '$success', Icons.check_circle, Colors.green)),
+                Expanded(
+                  child: _buildStatsCard(
+                    '成功次数',
+                    '$success',
+                    Icons.check_circle,
+                    Colors.green,
+                  ),
+                ),
               ],
             ),
             SizedBox(height: 8),
             Row(
               children: [
-                Expanded(child: _buildStatsCard('成功率', '${(successRate * 100).round()}%', Icons.trending_up, Colors.orange)),
+                Expanded(
+                  child: _buildStatsCard(
+                    '成功率',
+                    '${(successRate * 100).round()}%',
+                    Icons.trending_up,
+                    Colors.orange,
+                  ),
+                ),
                 SizedBox(width: 8),
-                Expanded(child: _buildStatsCard('平均时长', '${avgDuration}分钟', Icons.timer, Colors.red)),
+                Expanded(
+                  child: _buildStatsCard(
+                    '平均时长',
+                    '${avgDuration}分钟',
+                    Icons.timer,
+                    Colors.red,
+                  ),
+                ),
               ],
             ),
             SizedBox(height: 16),
 
             // 趋势图（按天/周）
-            Text('趋势分析', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              '趋势分析',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 8),
             Card(
               child: Container(
@@ -130,7 +177,10 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             SizedBox(height: 16),
 
             // 原因分析
-            Text('原因分析', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              '原因分析',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 8),
             Card(
               child: Padding(
@@ -138,7 +188,12 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 child: Column(
                   children: sortedReasons.take(4).map((e) {
                     double ratio = e.value / total;
-                    return _buildReasonItem(e.key, ratio, Colors.primaries[sortedReasons.indexOf(e) % Colors.primaries.length]);
+                    return _buildReasonItem(
+                      e.key,
+                      ratio,
+                      Colors.primaries[sortedReasons.indexOf(e) %
+                          Colors.primaries.length],
+                    );
                   }).toList(),
                 ),
               ),
@@ -149,7 +204,12 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     );
   }
 
-  Widget _buildStatsCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatsCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Card(
       child: Padding(
         padding: EdgeInsets.all(16),
@@ -157,8 +217,18 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           children: [
             Icon(icon, color: color, size: 24),
             SizedBox(height: 8),
-            Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-            Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+            Text(
+              title,
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
           ],
         ),
       ),

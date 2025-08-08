@@ -9,11 +9,7 @@ class RecordListItem extends StatelessWidget {
   final Record record;
   final VoidCallback onTap;
 
-  const RecordListItem({
-    super.key,
-    required this.record,
-    required this.onTap,
-  });
+  const RecordListItem({super.key, required this.record, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -61,14 +57,17 @@ class RecordListItem extends StatelessWidget {
                           isRecordToday
                               ? '今天 ${DateFormat('HH:mm').format(record.startTime)}'
                               : timeStr,
-                          style: theme.textTheme.titleSmall
-                              ?.copyWith(fontWeight: FontWeight.w600),
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         if (isRecordToday) ...[
                           const SizedBox(width: 8),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.primaryContainer,
                               borderRadius: BorderRadius.circular(10),
@@ -88,16 +87,19 @@ class RecordListItem extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       record.didResist
-                          ? '成功忍住 · ${record.reason}'
-                          : '持续${record.duration}分钟 · ${record.reason}',
+                          ? '成功忍住 · ${record.reasons.join(', ')}' // 将 List<String> 转换为一个字符串
+                          : '持续${record.duration}分钟 · ${record.reasons.join(', ')}', // 同上
                       style: theme.textTheme.bodySmall,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right,
-                  color: theme.colorScheme.onSurfaceVariant, size: 16),
+              Icon(
+                Icons.chevron_right,
+                color: theme.colorScheme.onSurfaceVariant,
+                size: 16,
+              ),
             ],
           ),
         ),

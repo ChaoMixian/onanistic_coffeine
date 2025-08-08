@@ -24,8 +24,8 @@ class _AllRecordsSheetState extends State<AllRecordsSheet> {
   @override
   void initState() {
     super.initState();
-    // 默认显示所有记录，并按时间倒序排列
-    _filteredRecords = List.from(widget.records.reversed);
+    // 默认显示所有记录，并按时间正序排列
+    _filteredRecords = List.from(widget.records);
   }
 
   void _applyFilter(String filterType) {

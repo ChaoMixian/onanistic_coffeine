@@ -1,26 +1,29 @@
-// main.dart
+// lib/main.dart
 import 'package:flutter/material.dart';
 import 'pages/home_page.dart';
 import 'pages/record_page.dart';
 import 'pages/settings_page.dart';
+import 'services/options_service.dart'; // 导入服务
 
-// 1. 定义一个 ValueNotifier 来管理主题模式
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 
-void main() {
+// 将 main 函数变为 async
+Future<void> main() async {
+  // 确保 Flutter 绑定已初始化
+  WidgetsFlutterBinding.ensureInitialized();
+  // 在 runApp 之前初始化 OptionsService
+  await OptionsService().init();
   runApp(HealthHabitApp());
 }
 
 class HealthHabitApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // 2. 使用 ValueListenableBuilder 来监听主题变化
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
       builder: (context, currentMode, child) {
         return MaterialApp(
           title: '手冲咖啡',
-          // 3. 定义亮色和暗色主题
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(
@@ -43,7 +46,6 @@ class HealthHabitApp extends StatelessWidget {
               elevation: 0,
             ),
           ),
-          // 4. 设置当前主题模式
           themeMode: currentMode,
           home: MainNavigationPage(),
         );
