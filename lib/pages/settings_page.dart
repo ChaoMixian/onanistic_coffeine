@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:share_plus/share_plus.dart';
 import '../db/database_helper.dart';
+import '../main.dart'; // 导入 main.dart 以访问 themeNotifier
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -13,7 +14,6 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool _notificationsEnabled = true;
   bool _dailyReminder = false;
-  bool _darkMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +50,10 @@ class _SettingsPageState extends State<SettingsPage> {
           SwitchListTile(
             title: Text('深色模式'),
             subtitle: Text('使用深色主题'),
-            value: _darkMode,
+            value: themeNotifier.value == ThemeMode.dark,
             onChanged: (value) {
               setState(() {
-                _darkMode = value;
+                themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
               });
             },
           ),
@@ -118,7 +118,7 @@ class _SettingsPageState extends State<SettingsPage> {
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: Colors.grey[700],
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );
