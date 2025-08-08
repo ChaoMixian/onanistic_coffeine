@@ -1,5 +1,4 @@
 // lib/utils/date_utils.dart
-import 'package:intl/intl.dart';
 
 /// 根据日期获取星期几的中文名称
 String getWeekdayName(DateTime date) {

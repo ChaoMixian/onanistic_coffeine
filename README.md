@@ -1,93 +1,91 @@
-# onanistic_coffeine
+# Onanistic Caffeine (手冲咖啡)
 
-A new Flutter project.
+> 一款注重隐私、高度自定义的健康习惯分析工具，旨在通过数据洞察，帮助用户更好地了解自我，建立积极的生活节奏。
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-
-这个项目既有趣又富有挑战性。下面是为你的跨平台软件 **“手冲咖啡”** 制定的一份初步规划，包括技术选型、功能模块、数据分析逻辑和同步方案。它同时具有**记录**、**分析**和**引导**三大功能目标。
+[![Flutter](https://img.shields.io/badge/Made%20with-Flutter-blue.svg)](https://flutter.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Style: Material Design 3](https://img.shields.io/badge/Style-Material_3-green.svg)](https://m3.material.io/)
 
 ---
 
-## 🧠 产品定位：
+“手冲咖啡”是一个完全离线的 Flutter 应用，所有数据均安全地存储在用户本地设备上。它不仅仅是一个简单的记录工具，更是一个通过多维度数据分析，帮助用户发现行为模式、理解情绪关联、最终实现自我提升的伙伴。
 
-一个旨在通过记录与分析手淫行为，帮助用户理解自身生理心理节奏、优化健康习惯、避免沉迷的工具型应用。
-**关键词**：健康、自律、隐私、安全、跨平台、可视化。
+## ✨ 主要功能
 
----
+### 1. 全面的数据记录
+提供丰富的记录维度，精准捕捉每一次事件的完整情景。
+- **事前状态**: 记录冲动来临前的心理状态（如压力、平静、愉悦等）。
+- **事件类型**: 可自定义的场景分类（如独处时、睡前、浏览内容后等）。
+- **主要原因**: 支持多选，并可自定义具体原因（如焦虑、无聊、习惯等）。
+- **结果与细节**: 区分“成功忍住”与“未能忍住”，并记录时长、事后感觉、疲劳程度等。
 
-## 🧩 功能模块设计
+| 记录 | 深色模式 |
+| :---: | :---: |
+| ![recordPage](images/recordPage.jpg) | ![recordPage_Dark](images/recordPage_Dark.jpg) |
 
-### 1. 📅 数据记录
+### 2. 强大的数据可视化
+首页集成了多种图表，将零散的数据转化为直观的洞察。
+- **连胜记录与状态日历**: 以签到的形式直观展示每日状态，并自动计算当前及历史最长坚持天数。
+- **基础统计**: 提供月度/周度的核心指标卡片，快速了解整体趋势。
+- **高级数据洞察**:
+  - **关联散点图**: 揭示“事前状态”与“事后感觉”的内在联系。
+  - **高发时段分析**: 识别一天中冲动最易发生的“危险时刻”。
+  - **成功率趋势图**: 绘制长期的进步曲线，给予正向激励。
 
-* 时间戳记录（支持时区）
-* 类型分类（普通、色情内容驱动、自慰辅助设备等）
-* 体验评分（1\~10）
-* 状态记录（前情绪、后情绪、疲劳程度）
-* 备注文本
+| 首页 | 深色模式 |
+| :---: | :---: |
+| ![homePage](images/homePage.jpg) | ![homePage_Dark](images/homePage_Dark.jpg) |
+> 这长截图。。。
 
-> 可选：是否使用色情内容、是否有自慰辅助工具、是否伴随高潮等。
+### 3. 高度自定义
+应用的“事件类型”和“主要原因”均可由用户完全自定义。
+- **动态添加**: 在记录时选择“其他”并输入新内容，即可自动添加为永久选项。
+- **专业管理**: 在设置中可以对所有选项进行增、删、改、拖拽排序。
+- **一键重置**: 可随时将选项恢复到应用的默认配置。
 
----
+### 4. 注重隐私与数据管理
+- **完全离线**: 所有数据仅存储在本地 SQLite 数据库中，无需联网，无需注册。
+- **数据备份与恢复**: 支持一键将整个数据库文件导出备份，并可随时从备份文件恢复。
+- **深色模式**: 支持浅色/深色模式切换，提供舒适的视觉体验。
 
-### 2. 📊 数据分析
+## 🚀 技术栈
 
-* 频率图（按日/周/月统计）
-* 打飞机与情绪波动关联（打完是快乐还是空虚）
-* 评分趋势图（高分低频 vs 低分高频）
-* 反思模块（间隔时间过短提示）
-* 习惯热力图（比如某些时间段高频）
+- **框架**: Flutter 3.x
+- **状态管理**: `ValueNotifier`
+- **本地数据库**: `sqflite`
+- **核心依赖**: `intl`, `share_plus`, `file_picker`
+- **设计语言**: Material Design 3
 
----
+## 快速开始
 
-### 3. ⏰ 健康引导功能
+1.  确保您已正确安装 [Flutter SDK](https://flutter.dev/docs/get-started/install)。
+2.  克隆本项目:
+    ```bash
+    git clone https://github.com/ChaoMixian/onanistic_coffeine.git
+    ```
+3.  进入项目目录并安装依赖:
+    ```bash
+    cd onanistic_coffeine
+    flutter pub get
+    ```
+4.  运行应用:
+    ```bash
+    flutter run
+    ```
 
-* 频率警告机制（如：近3天超过5次）
-* 正向强化（如：连续3天未自慰奖励勋章）
-* 科普文章推送（基于时机，如连续频率偏高后推送关于多巴胺戒断的内容）
+## 🔮 未来规划
 
----
+我们计划在未来加入更多激动人心的功能，包括：
+- [ ] **目标设定系统**: 允许用户设定每周次数限制或挑战连续坚持天数。
+- [ ] **紧急模式 (SOS Button)**: 当冲动来临时，提供一个模式中断工具箱（如引导式呼吸、激励语录等）。
+- [ ] **数据导出为 CSV**: 方便用户在 PC 上进行更深入的分析。
+- [ ] **多端数据同步**: (可选) 提供基于云服务的跨设备数据同步方案。
 
-### 4. ☁️ 数据同步与安全
+## 🤝 贡献
 
-* 多端同步（加密存储 + 云同步）
-* 本地离线记录支持，稍后同步
-* 加密策略：使用 AES + 可选云端存储（比如 iCloud / 自建服务器 / Firebase）
-* 支持账号登录（匿名UUID也可）
+欢迎任何形式的贡献！如果您有好的想法、建议或发现了 Bug，请随时提交 [Issues](https://github.com/YOUR_USERNAME/onanistic_coffeine/issues) 或发起 [Pull Request](https://github.com/YOUR_USERNAME/onanistic_coffeine/pulls)。
 
----
+## 📄 许可
 
-## 🧪 用户界面建议
-
-* 简洁日历视图记录次数
-* 折线图+条形图展示频率与体验
-* 「冥想」或「健康提示」卡片（引导非色情放松方式）
-* 可以命名每一次记录（例如“考试压力大之后”）
-
----
-
-## 🧼 命名建议
-
-* 中文名：**手冲咖啡**
-* 英文名：**Onanistic Caffeine**
-
----
-
-## 🔮 后续可扩展功能
-
-* 社区功能（匿名交流）
-* GPT 生成引导建议或情绪分析
-* Apple HealthKit / Google Fit 接入（心率、睡眠 vs 行为分析）
-* 多人设备间共享（情侣记录等 🤯）
+本项目采用 [MIT License](LICENSE) 开源。
 

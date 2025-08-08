@@ -588,7 +588,7 @@ class _ResultOption extends StatelessWidget {
       ),
       trailing: isSelected ? Icon(Icons.check_circle, color: color, size: 24) : null,
       selected: isSelected,
-      selectedTileColor: color.withOpacity(0.05),
+      selectedTileColor: color.withAlpha((0.05 * 255).round()),
     );
   }
 }

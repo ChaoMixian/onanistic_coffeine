@@ -2,7 +2,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/record.dart';
-import 'dart:convert';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -22,14 +21,15 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, fileName);
 
-    // 数据库版本升级到 3
     return await openDatabase(path, version: 3, onCreate: _createDB);
   }
 
   Future _createDB(Database db, int version) async {
+    // --- 已修改：在所有 CREATE TABLE 语句中加入 IF NOT EXISTS ---
+    
     // 创建记录表
     await db.execute('''
-      CREATE TABLE records (
+      CREATE TABLE IF NOT EXISTS records (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         startTime TEXT NOT NULL,
         duration INTEGER NOT NULL,
@@ -45,7 +45,7 @@ class DatabaseHelper {
 
     // 创建事件类型表
     await db.execute('''
-      CREATE TABLE event_types (
+      CREATE TABLE IF NOT EXISTS event_types (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE,
         sortOrder INTEGER NOT NULL
@@ -54,15 +54,18 @@ class DatabaseHelper {
     
     // 创建原因表
     await db.execute('''
-      CREATE TABLE reasons (
+      CREATE TABLE IF NOT EXISTS reasons (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE,
         sortOrder INTEGER NOT NULL
       )
     ''');
     
-    // 插入默认数据
-    await _insertDefaultOptions(db);
+    // 检查表是否为空，如果为空才插入默认数据
+    var eventTypesCount = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM event_types'));
+    if (eventTypesCount == 0) {
+        await _insertDefaultOptions(db);
+    }
   }
   
   // 插入默认选项的方法
@@ -143,6 +146,12 @@ class DatabaseHelper {
   Future<List<Record>> getAllRecords() async {
     final db = await instance.database;
     final result = await db.query('records', orderBy: 'startTime DESC');
+    return result.map((map) => Record.fromMap(map)).toList();
+  }
+  
+  Future<List<Record>> getAllRecordsAsc() async {
+    final db = await instance.database;
+    final result = await db.query('records', orderBy: 'startTime ASC');
     return result.map((map) => Record.fromMap(map)).toList();
   }
 

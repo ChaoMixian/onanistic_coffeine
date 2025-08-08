@@ -5,12 +5,16 @@ import 'pages/record_page.dart';
 import 'pages/settings_page.dart';
 import 'services/options_service.dart'; // 导入服务
 
+import 'package:intl/date_symbol_data_local.dart';
+
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 
 // 将 main 函数变为 async
 Future<void> main() async {
   // 确保 Flutter 绑定已初始化
   WidgetsFlutterBinding.ensureInitialized();
+  // 初始化中文的日期格式数据
+  await initializeDateFormatting('zh_CN', null);
   // 在 runApp 之前初始化 OptionsService
   await OptionsService().init();
   runApp(HealthHabitApp());
