@@ -83,7 +83,7 @@
 
 ## 🤝 贡献
 
-欢迎任何形式的贡献！如果您有好的想法、建议或发现了 Bug，请随时提交 [Issues](https://github.com/YOUR_USERNAME/onanistic_coffeine/issues) 或发起 [Pull Request](https://github.com/YOUR_USERNAME/onanistic_coffeine/pulls)。
+欢迎任何形式的贡献！如果您有好的想法、建议或发现了 Bug，请随时提交 [Issues](https://github.com/ChaoMixian/onanistic_coffeine/issues) 或发起 [Pull Request](https://github.com/ChaoMixian/onanistic_coffeine/pulls)。
 
 ## 📄 许可
 
