@@ -602,7 +602,6 @@ abstract class _BaseRating extends StatelessWidget {
   final Color color;
 
   const _BaseRating({
-    super.key,
     required this.value,
     required this.onChanged,
     required this.title,
